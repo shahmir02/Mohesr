@@ -1,0 +1,10 @@
+Program_Code,Institution_Code,Program_Name,Program_Status
+PRG_CS,INST001,BSc Computer Science,Active
+PRG_BA,INST001,Master of Business Administration,Active
+PRG_ENG,INST002,BEng Mechanical Engineering,Active
+PRG_MED,INST002,Doctor of Medicine,Active
+PRG_IT,INST003,Diploma in IT Support,Suspended
+PRG_AI,INST004,MSc Artificial Intelligence & Data Science,Active
+PRG_CYBER,INST004,BSc Cybersecurity & Digital Forensics,Active
+PRG_AV,INST005,Aviation Maintenance Engineering,Active
+PRG_NURS,INST006,Bachelor of Nursing,Active
