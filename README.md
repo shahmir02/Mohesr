@@ -82,13 +82,14 @@ python run_all.py
 This single command runs:
 1. **Source Data Profiling** (`PROFILE_DATA`)
 2. **Bronze Ingestion & 4-Way Reconciliation** (Schema, Record Count, SHA-256 Checksum, Numeric Aggregations)
-3. **Silver Cleansing & Quarantine Routing** (Completeness, Deduplication, Referential Integrity, Format Regex, Chronology)
+3. **Silver Cleansing & Quarantine Routing** (Completeness, Deduplication, Cross-Key Identity Deduplication, Referential Integrity, Format Regex, Chronology)
 4. **Gold SCD Type 2 Dimension Processing** (`dim_student_scd2`)
 5. **Gold Wide Analytical Mart Consolidation** (`fact_student_enrollment_wide`)
-6. **Data Quality Scoring Engine** (Overall Health: **97.71% EXCELLENT**)
+6. **Data Quality Scoring Engine** (Overall Health: **97.78% EXCELLENT**)
 7. **Generates All Governance Artifacts:**
    - Interactive HTML Scorecard: `reports/dq_scorecard_report.html`
    - Data Documentation PDF: `docs/DATA_DOCUMENTATION.pdf`
+   - Plain-English DQ Test Summary Matrix: `docs/dq_test_cases_summary.csv`
    - JSON & Markdown Summaries: `reports/dq_summary.json`, `reports/dq_summary.md`
 8. **Runs 100% of Automated Test Suite with Allure Reports** (`reports/allure-results/`)
 
@@ -108,3 +109,4 @@ python scripts/generate_pdf_docs.py
 ```bash
 pytest tests/test_keyword_framework.py -v
 ```
+# Mohesr
