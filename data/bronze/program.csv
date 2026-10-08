@@ -1,0 +1,10 @@
+Program_Code,Institution_Code,Program_Name,Program_Status,_bronze_ingestion_ts,_bronze_source_file
+PRG_CS,INST001,BSc Computer Science,Active,2026-10-09T02:17:24.639+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/program.csv
+PRG_BA,INST001,Master of Business Administration,Active,2026-10-09T02:17:24.639+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/program.csv
+PRG_ENG,INST002,BEng Mechanical Engineering,Active,2026-10-09T02:17:24.639+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/program.csv
+PRG_MED,INST002,Doctor of Medicine,Active,2026-10-09T02:17:24.639+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/program.csv
+PRG_IT,INST003,Diploma in IT Support,Suspended,2026-10-09T02:17:24.639+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/program.csv
+PRG_AI,INST004,MSc Artificial Intelligence & Data Science,Active,2026-10-09T02:17:24.639+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/program.csv
+PRG_CYBER,INST004,BSc Cybersecurity & Digital Forensics,Active,2026-10-09T02:17:24.639+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/program.csv
+PRG_AV,INST005,Aviation Maintenance Engineering,Active,2026-10-09T02:17:24.639+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/program.csv
+PRG_NURS,INST006,Bachelor of Nursing,Active,2026-10-09T02:17:24.639+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/program.csv
