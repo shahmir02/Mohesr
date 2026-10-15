@@ -1,0 +1,18 @@
+Student_ID,Emirates_ID,Full_Name,Date_of_Birth,Gender,Nationality_Code,Institution_Code,Created_Date,Updated_Date,_bronze_ingestion_ts,_bronze_source_file
+STU001,784-2001-1234567-1,Fatima Ahmed Al-Mansoori,2001-05-14,F,ARE,INST001,2023-01-15 08:30:00,2023-01-15 08:30:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU002,784-2002-7654321-2,Zayed Sultan Al-Nahyan,2002-11-22,M,ARE,INST001,2023-01-16 09:15:00,2023-04-10 14:20:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU002,784-2002-7654321-2,Zayed S. Al-Nahyan,2002-11-22,M,ARE,INST001,2023-01-16 09:15:00,2023-04-11 10:00:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU003,784-1999-9876543-3,John Robert Smith,1999-03-05,M,GBR,INST002,2023-01-17 11:00:00,2023-01-17 11:00:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU004,784-2003-4567890-4,Aisha Yusuf Mohammed,2003-08-30,Female,OMN,INST002,2023-01-18 10:45:00,2023-01-18 10:45:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+,784-2000-5555555-5,Omar Hassan Al-Ali,2000-12-12,M,ARE,INST001,2023-01-20 15:30:00,2023-01-20 15:30:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU005,INVALID_EID_FORMAT_999,Mariam Khalil,2002-05-12,Female,ARE,INST001,2023-01-22 09:00:00,2023-01-22 09:00:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU006,784-2001-2222222-7,Rahul Sharma,2001-07-19,M,IND,INST_NON_EXISTENT_999,2023-01-25 13:00:00,2023-01-25 13:00:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU007,784-1998-3333333-8,Sarah Jane Connor,1998-04-12,F,USA,INST004,2023-02-01 10:00:00,2023-02-01 10:00:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU008,784-2004-4444444-9,Tariq Mahmoud,2004-10-05,Male,EGY,INST004,2023-02-05 14:00:00,2023-02-05 14:00:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU009,784-2002-8888888-0,Laila Noor,2002-01-20,F,ARE,INST005,2023-02-10 11:30:00,2023-02-10 11:30:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU010,784-1995-1010101-1,Ahmed Al-Hadhrami,1995-09-15,M,SAU,INST006,2023-02-15 08:00:00,2023-02-15 08:00:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU011,784-2005-2020202-2,Elena Rostova,2005-12-01,Female,RUS,INST006,2023-02-20 16:45:00,2023-02-20 16:45:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU012,784-2000-3030303-3,Chen Wei,2000-03-25,M,CHN,INST_INVALID_CODE,2023-03-01 12:00:00,2023-03-01 12:00:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU013,784-2002-4040404-4,Khadija Bilal,2002-06-18,UNKNOWN_GENDER,ARE,INST001,2023-03-05 09:30:00,2023-03-05 09:30:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU014,784-1999-5050505-5,Carlos Silva,1999-11-11,Male,BRA,INST002,2023-03-10 10:15:00,2023-03-10 10:15:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv
+STU014,784-1999-5050505-5,Carlos Silva Junior,1999-11-11,M,BRA,INST002,2023-03-10 10:15:00,2023-05-20 15:00:00,2026-10-11T00:58:35.686+04:00,/Users/mirs/PyCharmMiscProject/Data/data/source/student.csv

@@ -1,0 +1,318 @@
+{
+  "institution": {
+    "dataset_name": "INSTITUTION",
+    "total_records": 6,
+    "total_columns": 3,
+    "columns": {
+      "Institution_Code": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 6,
+        "uniqueness_pct": 100.0,
+        "min": "INST001",
+        "max": "INST006",
+        "avg": null,
+        "min_length": 7,
+        "max_length": 7
+      },
+      "Institution_Name": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 6,
+        "uniqueness_pct": 100.0,
+        "min": "Abu Dhabi Medical Academy",
+        "max": "Sharjah Higher Institute of Technology",
+        "avg": null,
+        "min_length": 19,
+        "max_length": 38
+      },
+      "Institution_Status": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 2,
+        "uniqueness_pct": 33.33,
+        "min": "Active",
+        "max": "Inactive",
+        "avg": null,
+        "min_length": 6,
+        "max_length": 8
+      }
+    }
+  },
+  "program": {
+    "dataset_name": "PROGRAM",
+    "total_records": 9,
+    "total_columns": 4,
+    "columns": {
+      "Program_Code": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 9,
+        "uniqueness_pct": 100.0,
+        "min": "PRG_AI",
+        "max": "PRG_NURS",
+        "avg": null,
+        "min_length": 6,
+        "max_length": 9
+      },
+      "Institution_Code": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 6,
+        "uniqueness_pct": 66.67,
+        "min": "INST001",
+        "max": "INST006",
+        "avg": null,
+        "min_length": 7,
+        "max_length": 7
+      },
+      "Program_Name": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 9,
+        "uniqueness_pct": 100.0,
+        "min": "Aviation Maintenance Engineering",
+        "max": "Master of Business Administration",
+        "avg": null,
+        "min_length": 18,
+        "max_length": 42
+      },
+      "Program_Status": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 2,
+        "uniqueness_pct": 22.22,
+        "min": "Active",
+        "max": "Suspended",
+        "avg": null,
+        "min_length": 6,
+        "max_length": 9
+      }
+    }
+  },
+  "student": {
+    "dataset_name": "STUDENT",
+    "total_records": 17,
+    "total_columns": 9,
+    "columns": {
+      "Student_ID": {
+        "type": "StringType()",
+        "null_count": 1,
+        "null_pct": 5.88,
+        "distinct_count": 15,
+        "uniqueness_pct": 88.24,
+        "min": "STU001",
+        "max": "STU014",
+        "avg": null,
+        "min_length": 6,
+        "max_length": 6
+      },
+      "Emirates_ID": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 15,
+        "uniqueness_pct": 88.24,
+        "min": "784-1995-1010101-1",
+        "max": "INVALID_EID_FORMAT_999",
+        "avg": null,
+        "min_length": 18,
+        "max_length": 22
+      },
+      "Full_Name": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 17,
+        "uniqueness_pct": 100.0,
+        "min": "Ahmed Al-Hadhrami",
+        "max": "Zayed Sultan Al-Nahyan",
+        "avg": null,
+        "min_length": 8,
+        "max_length": 24
+      },
+      "Date_of_Birth": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 15,
+        "uniqueness_pct": 88.24,
+        "min": "1995-09-15",
+        "max": "2005-12-01",
+        "avg": null,
+        "min_length": 10,
+        "max_length": 10
+      },
+      "Gender": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 5,
+        "uniqueness_pct": 29.41,
+        "min": "F",
+        "max": "UNKNOWN_GENDER",
+        "avg": null,
+        "min_length": 1,
+        "max_length": 14
+      },
+      "Nationality_Code": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 10,
+        "uniqueness_pct": 58.82,
+        "min": "ARE",
+        "max": "USA",
+        "avg": null,
+        "min_length": 3,
+        "max_length": 3
+      },
+      "Institution_Code": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 7,
+        "uniqueness_pct": 41.18,
+        "min": "INST001",
+        "max": "INST_NON_EXISTENT_999",
+        "avg": null,
+        "min_length": 7,
+        "max_length": 21
+      },
+      "Created_Date": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 15,
+        "uniqueness_pct": 88.24,
+        "min": "2023-01-15 08:30:00",
+        "max": "2023-03-10 10:15:00",
+        "avg": null,
+        "min_length": 19,
+        "max_length": 19
+      },
+      "Updated_Date": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 17,
+        "uniqueness_pct": 100.0,
+        "min": "2023-01-15 08:30:00",
+        "max": "2023-05-20 15:00:00",
+        "avg": null,
+        "min_length": 19,
+        "max_length": 19
+      }
+    }
+  },
+  "enrollment": {
+    "dataset_name": "ENROLLMENT",
+    "total_records": 18,
+    "total_columns": 8,
+    "columns": {
+      "Enrollment_ID": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 18,
+        "uniqueness_pct": 100.0,
+        "min": "ENR001",
+        "max": "ENR018",
+        "avg": null,
+        "min_length": 6,
+        "max_length": 6
+      },
+      "Student_ID": {
+        "type": "StringType()",
+        "null_count": 1,
+        "null_pct": 5.56,
+        "distinct_count": 12,
+        "uniqueness_pct": 66.67,
+        "min": "STU001",
+        "max": "STU_NON_EXISTENT_999",
+        "avg": null,
+        "min_length": 6,
+        "max_length": 20
+      },
+      "Institution_Code": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 6,
+        "uniqueness_pct": 33.33,
+        "min": "INST001",
+        "max": "INST_UNKNOWN_999",
+        "avg": null,
+        "min_length": 7,
+        "max_length": 16
+      },
+      "Program_Code": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 9,
+        "uniqueness_pct": 50.0,
+        "min": "PRG_AI",
+        "max": "PRG_NURS",
+        "avg": null,
+        "min_length": 6,
+        "max_length": 20
+      },
+      "Academic_Year": {
+        "type": "IntegerType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 2,
+        "uniqueness_pct": 11.11,
+        "min": "1990",
+        "max": "2023",
+        "avg": 2021.17,
+        "min_length": null,
+        "max_length": null
+      },
+      "Enrollment_Status": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 4,
+        "uniqueness_pct": 22.22,
+        "min": "Enrolled",
+        "max": "Suspended",
+        "avg": null,
+        "min_length": 8,
+        "max_length": 14
+      },
+      "Enrollment_Date": {
+        "type": "StringType()",
+        "null_count": 0,
+        "null_pct": 0.0,
+        "distinct_count": 13,
+        "uniqueness_pct": 72.22,
+        "min": "2019-09-01",
+        "max": "2023-09-25",
+        "avg": null,
+        "min_length": 10,
+        "max_length": 10
+      },
+      "Graduation_Date": {
+        "type": "StringType()",
+        "null_count": 15,
+        "null_pct": 83.33,
+        "distinct_count": 4,
+        "uniqueness_pct": 22.22,
+        "min": "2022-06-30",
+        "max": "2024-06-30",
+        "avg": null,
+        "min_length": 10,
+        "max_length": 10
+      }
+    }
+  }
+}

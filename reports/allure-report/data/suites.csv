@@ -1,0 +1,101 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+[SILVER LAYER] [DIMENSIONS: Consistency, Timeliness] [ACTION: QUARANTINE]
+Verifies date chronology (Graduation_Date >= Enrollment_Date) and audit timestamps.
+","77","test_07_silver_consistency_and_timeliness_actual_files","tests","Fri Oct 09 01:03:15 GST 2026","passed","Fri Oct 09 01:03:15 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[GOLD LAYER] [DIMENSIONS: Completeness, Consistency, Validity]
+Verifies wide analytical fact table consolidating Student, Enrollment, Institution, and Program:
+- Contains joined attributes from all 4 datasets.
+- Gold Business Rules applied (Active Institution, Active Program, Minimum Age).
+- Enforces quarantine/exclusion when business rules fail.
+","132","Task 9: Gold Layer - 4-Table Consolidated Wide Mart & Business Rule Enforcement","tests","Thu Oct 15 23:29:59 GST 2026","passed","Thu Oct 15 23:29:59 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[BRONZE LAYER] [DIMENSIONS: Completeness, Consistency, Validity] [ACTION: REJECT/FAIL]
+Verifies 4-Way Reconciliation between actual Source CSVs and actual Bronze CSVs:
+- Schema match (Completeness)
+- Record count match (Completeness)
+- Checksum payload hash (Consistency)
+- Numeric aggregation (Validity)
+","1338","Task 2: Source to Bronze 4-Way Reconciliation (Exact Match, No Loss, Checksums)","tests","Thu Oct 15 23:29:51 GST 2026","passed","Thu Oct 15 23:29:52 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[GOVERNANCE] Verifies that when a critical rule fails with FAIL/REJECT action,
+a DataQualityException is raised to halt the pipeline.
+","171","Task 10: Critical Rule Abort / Exception Mechanism Verification","tests","Thu Oct 15 23:29:59 GST 2026","passed","Thu Oct 15 23:29:59 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[TIMELINESS / CONSISTENCY]
+Verifies that Updated_Date is logically on or after Created_Date (updated_date >= created_date).
+Records with updated_date < created_date are flagged with dq_errors.
+","81","Task 12: Created_Date vs Updated_Date Chronology Verification","tests","Thu Oct 15 23:29:59 GST 2026","passed","Thu Oct 15 23:29:59 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[SILVER LAYER] [DIMENSION: Completeness]
+Verifies that clean Silver datasets contain zero records with missing mandatory identifiers,
+and strictly enforces quarantine when missing mandatory keys are supplied.
+","1794","Task 3: Completeness Dimension - Mandatory Identifier Validation","tests","Thu Oct 15 23:29:52 GST 2026","passed","Thu Oct 15 23:29:54 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[DOCUMENTATION & DATA] Verifies that:
+1. Test cases summary CSV exists with all required columns in plain English.
+2. All 4 layers (Source, Bronze, Silver, Gold) contain clean CSV files.
+3. No quarantine directories exist in the data folder.
+","1","Task 11: Verification of Layer CSV Datasets & Test Summary CSV","tests","Thu Oct 15 23:29:59 GST 2026","passed","Thu Oct 15 23:29:59 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[SILVER LAYER] [DIMENSION: Uniqueness]
+Verifies deduplication on Student natural key:
+- Silver clean contains 100% unique Student_IDs.
+- Failure scenario: Stale duplicate versions must be quarantined.
+","1049","Task 4: Uniqueness Dimension - Natural Key Deduplication & Stale Record Isolation","tests","Thu Oct 15 23:29:54 GST 2026","passed","Thu Oct 15 23:29:55 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[GOLD LAYER] [DIMENSION: Consistency / History]
+Verifies SCD Type 2 dimension structure:
+- version, effective_start_date, effective_end_date, is_current
+- active records have is_current = True
+","61","test_08_gold_scd2_dimension_actual_files","tests","Fri Oct 09 01:03:15 GST 2026","passed","Fri Oct 09 01:03:15 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[VALIDITY / CONSISTENCY]
+Verifies that Status attributes (Institution_Status, Program_Status, Enrollment_Status)
+enforce case-sensitive domain validation:
+- Exact matches (e.g. 'Active', 'Inactive', 'Pending') pass.
+- Casing variations (e.g. 'active', 'ACTIVE', 'pending', 'invalid') are quarantined.
+","152","Task 15: Case-Sensitive Status Domain Verification","tests","Thu Oct 15 23:29:59 GST 2026","passed","Thu Oct 15 23:30:00 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[TIMELINESS]
+Verifies that records delayed beyond an allowable threshold window are detected and flagged.
+","112","Task 14: Delayed Records Freshness & Timeliness Validation","tests","Thu Oct 15 23:29:59 GST 2026","passed","Thu Oct 15 23:29:59 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[SILVER LAYER] [DIMENSION: Consistency]
+Verifies date chronology logic:
+- Graduation_Date is always on or after Enrollment_Date.
+- Failure scenario: Reverse date sequences are quarantined.
+","966","Task 7: Consistency Dimension - Date Chronology Sequence Validation","tests","Thu Oct 15 23:29:58 GST 2026","passed","Thu Oct 15 23:29:59 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[SEVERITY & ACTION] [ACTION: REJECT/FAIL vs QUARANTINE]
+Verifies that a rule defined with CRITICAL severity and REJECT/FAIL action
+halts the pipeline with a DataQualityException, while HIGH/MEDIUM rules quarantine.
+","174","test_10_critical_severity_reject_aborts_pipeline","tests","Fri Oct 09 01:03:15 GST 2026","passed","Fri Oct 09 01:03:15 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[UNIQUENESS / CONSISTENCY]
+Verifies detection of records with duplicate (Full_Name, Emirates_ID) but different Student_ID.
+","112","Task 13: Duplicate Name and Emirates_ID with Different Student_ID Check","tests","Thu Oct 15 23:29:59 GST 2026","passed","Thu Oct 15 23:29:59 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[PROFILING] Validate data profiling execution against all 4 actual source CSV files,
+verifying that structural (rows, columns), completeness (nulls), uniqueness,
+and statistical metrics (min, max, avg, lengths) are accurately computed.
+","7544","Task 1: Automated Data Profiling on 4 Actual Source Datasets","tests","Thu Oct 15 23:29:43 GST 2026","passed","Thu Oct 15 23:29:51 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[GOLD LAYER] [DIMENSION: Consistency, Uniqueness]
+Verifies Gold SCD Type 2 dimension structure:
+- Contains effective_start_date, effective_end_date, is_current, version.
+- Active current records have effective_end_date = 9999-12-31 23:59:59 and is_current = True.
+- Strictly enforces single active version per student.
+","208","Task 8: Gold Layer - SCD Type 2 Dimensioning & Version Tracking","tests","Thu Oct 15 23:29:59 GST 2026","passed","Thu Oct 15 23:29:59 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[SILVER LAYER] [DIMENSION: Referential Integrity]
+Verifies that all foreign key references in clean Silver tables point to valid parent records,
+and isolates orphan foreign keys to quarantine.
+","1544","Task 6: Referential Integrity Dimension - Cross-Table Foreign Key Enforcement","tests","Thu Oct 15 23:29:56 GST 2026","passed","Thu Oct 15 23:29:58 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""
+"
+[SILVER LAYER] [DIMENSION: Validity]
+Verifies format regex (Emirates ID), allowed status values, and academic year range:
+- All Clean Silver records have valid UAE Emirates ID format and valid standardized Gender values.
+- Failure scenario: Invalid format and domain values must be quarantined.
+","1092","Task 5: Validity Dimension - Regex Matching & Domain Set Constraints","tests","Thu Oct 15 23:29:55 GST 2026","passed","Thu Oct 15 23:29:56 GST 2026","TestActualFilesMedallionDQFramework","test_keyword_framework","",""

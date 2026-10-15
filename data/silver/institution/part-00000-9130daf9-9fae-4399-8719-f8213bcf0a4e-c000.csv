@@ -1,0 +1,7 @@
+Institution_Code,Institution_Name,Institution_Status,_silver_processed_ts,_pipeline_version,_is_valid
+INST001,Emirates National University,Active,2026-10-11T00:58:36.400+04:00,v2.4.0,true
+INST002,Gulf Science Academy,Active,2026-10-11T00:58:36.400+04:00,v2.4.0,true
+INST003,Al Khibra Institute,Inactive,2026-10-11T00:58:36.400+04:00,v2.4.0,true
+INST004,Dubai Future Polytechnic,Active,2026-10-11T00:58:36.400+04:00,v2.4.0,true
+INST005,Sharjah Higher Institute of Technology,Active,2026-10-11T00:58:36.400+04:00,v2.4.0,true
+INST006,Abu Dhabi Medical Academy,Active,2026-10-11T00:58:36.400+04:00,v2.4.0,true
