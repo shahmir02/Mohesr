@@ -1,5 +1,5 @@
 # Keyword-Driven Data Quality Framework & Medallion Pipeline
-**Author:** mirs  
+**Author:** miraj 
 **Version:** 1.2.0  
 
 A production-ready PySpark framework implementing the Medallion Architecture (`Source` → `Bronze` → `Silver` → `Gold`) with keyword-driven data quality checks, 4-way source-to-bronze reconciliation, automated quarantine isolation, Slowly Changing Dimension Type 2 (SCD2) history tracking, executive HTML/PDF governance scorecards, and Allure test reports.

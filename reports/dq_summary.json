@@ -271,7 +271,7 @@
       "pass_rate": 100.0,
       "action": "QUARANTINE",
       "passed": true,
-      "details": "Institution_Status must be Active, Inactive, or Pending."
+      "details": "Institution_Status must be Active, Inactive, or Pending (case-sensitive)."
     },
     {
       "rule_id": "PRG_DQ_01",
@@ -299,7 +299,7 @@
       "pass_rate": 100.0,
       "action": "QUARANTINE",
       "passed": true,
-      "details": "Program_Status must be Active, Suspended, or Discontinued."
+      "details": "Program_Status must be Active, Suspended, or Discontinued (case-sensitive)."
     },
     {
       "rule_id": "PRG_DQ_03",
@@ -509,7 +509,7 @@
       "pass_rate": 94.44,
       "action": "QUARANTINE",
       "passed": false,
-      "details": "Enrollment_Status must be Enrolled, Graduated, Suspended, or Withdrawn."
+      "details": "Enrollment_Status must be Enrolled, Graduated, Suspended, or Withdrawn (case-sensitive)."
     },
     {
       "rule_id": "ENR_DQ_08",

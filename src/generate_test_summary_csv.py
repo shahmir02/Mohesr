@@ -64,7 +64,7 @@ def generate_test_summary_csv(output_paths=None):
             "id": "INST_DQ_03",
             "category": "Domain Set Constraints",
             "dq_dimension": "Validity",
-            "test_summary_description": "Ensure that Institution_Status belongs strictly to the allowable domain set ('Active', 'Inactive', 'Pending').",
+            "test_summary_description": "Ensure that Institution_Status strictly belongs to the allowable case-sensitive domain set ('Active', 'Inactive', 'Pending').",
             "code_snippet_in_query": "SELECT * FROM bronze_institution WHERE Institution_Status NOT IN ('Active', 'Inactive', 'Pending');"
         },
 
@@ -80,7 +80,7 @@ def generate_test_summary_csv(output_paths=None):
             "id": "PRG_DQ_02",
             "category": "Domain Set Constraints",
             "dq_dimension": "Validity",
-            "test_summary_description": "Ensure that Program_Status belongs strictly to the allowable domain set ('Active', 'Suspended', 'Discontinued').",
+            "test_summary_description": "Ensure that Program_Status strictly belongs to the allowable case-sensitive domain set ('Active', 'Suspended', 'Discontinued').",
             "code_snippet_in_query": "SELECT * FROM bronze_program WHERE Program_Status NOT IN ('Active', 'Suspended', 'Discontinued');"
         },
         {
@@ -141,6 +141,13 @@ def generate_test_summary_csv(output_paths=None):
             "test_summary_description": "Check for duplicate Full_Name/Name and Emirates_ID associated with different Student_ID values.",
             "code_snippet_in_query": "SELECT Full_Name, Emirates_ID, COUNT(DISTINCT Student_ID) FROM bronze_student GROUP BY Full_Name, Emirates_ID HAVING COUNT(DISTINCT Student_ID) > 1;"
         },
+        {
+            "id": "STU_DQ_08",
+            "category": "Timeliness & Freshness",
+            "dq_dimension": "Timeliness",
+            "test_summary_description": "Verify that delayed records exceeding the allowable SLA freshness window are identified and flagged.",
+            "code_snippet_in_query": "SELECT * FROM bronze_student WHERE DATEDIFF(CURRENT_TIMESTAMP(), Updated_Date) > 30;"
+        },
 
         # 5. ENROLLMENT SILVER RULES
         {
@@ -189,7 +196,7 @@ def generate_test_summary_csv(output_paths=None):
             "id": "ENR_DQ_07",
             "category": "Domain Set Constraints",
             "dq_dimension": "Validity",
-            "test_summary_description": "Check that Enrollment_Status belongs to the allowed domain values ('Enrolled', 'Graduated', 'Suspended', 'Withdrawn').",
+            "test_summary_description": "Check that Enrollment_Status strictly belongs to the allowed case-sensitive domain values ('Enrolled', 'Graduated', 'Suspended', 'Withdrawn').",
             "code_snippet_in_query": "SELECT * FROM bronze_enrollment WHERE Enrollment_Status NOT IN ('Enrolled', 'Graduated', 'Suspended', 'Withdrawn');"
         },
         {

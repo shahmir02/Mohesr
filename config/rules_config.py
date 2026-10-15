@@ -101,8 +101,8 @@ INSTITUTION_RULES = [
         "keyword": "VALUE_IN_SET",
         "severity": "HIGH",
         "action": "QUARANTINE",
-        "params": {"column": "Institution_Status", "allowed_values": ["Active", "Inactive", "Pending"]},
-        "description": "Institution_Status must be Active, Inactive, or Pending."
+        "params": {"column": "Institution_Status", "allowed_values": ["Active", "Inactive", "Pending"], "case_sensitive": True},
+        "description": "Institution_Status must be Active, Inactive, or Pending (case-sensitive)."
     }
 ]
 
@@ -129,8 +129,8 @@ PROGRAM_RULES = [
         "keyword": "VALUE_IN_SET",
         "severity": "HIGH",
         "action": "QUARANTINE",
-        "params": {"column": "Program_Status", "allowed_values": ["Active", "Suspended", "Discontinued"]},
-        "description": "Program_Status must be Active, Suspended, or Discontinued."
+        "params": {"column": "Program_Status", "allowed_values": ["Active", "Suspended", "Discontinued"], "case_sensitive": True},
+        "description": "Program_Status must be Active, Suspended, or Discontinued (case-sensitive)."
     },
     {
         "rule_id": "PRG_DQ_03",
@@ -339,8 +339,8 @@ ENROLLMENT_RULES = [
         "keyword": "VALUE_IN_SET",
         "severity": "MEDIUM",
         "action": "QUARANTINE",
-        "params": {"column": "Enrollment_Status", "allowed_values": ["Enrolled", "Graduated", "Suspended", "Withdrawn"]},
-        "description": "Enrollment_Status must be Enrolled, Graduated, Suspended, or Withdrawn."
+        "params": {"column": "Enrollment_Status", "allowed_values": ["Enrolled", "Graduated", "Suspended", "Withdrawn"], "case_sensitive": True},
+        "description": "Enrollment_Status must be Enrolled, Graduated, Suspended, or Withdrawn (case-sensitive)."
     },
     {
         "rule_id": "ENR_DQ_08",

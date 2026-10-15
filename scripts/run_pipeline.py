@@ -73,11 +73,30 @@ def run_medallion_pipeline():
     # =========================================================================
     print_banner("Stage 1: Source Data Profiling")
     datasets = ["institution", "program", "student", "enrollment"]
+    profiling_reports = {}
     
     for ds in datasets:
         df = spark.read.option("header", "true").option("inferSchema", "true").csv(os.path.join(src_dir, f"{ds}.csv"))
         prof = dq_engine.profile_data(df, dataset_name=ds.upper())
-        print(f"[PROFILE] {prof['dataset_name']:<12} | Rows: {prof['total_records']:<3} | Columns: {prof['total_columns']}")
+        profiling_reports[ds] = prof
+        
+        print(f"\n[PROFILE] Dataset: {prof['dataset_name']} (Records: {prof['total_records']}, Columns: {prof['total_columns']})")
+        print(f"  {'Column':<20} | {'Type':<15} | {'Nulls (%)':<12} | {'Unique (%)':<14} | {'Min':<15} | {'Max':<15} | {'Avg':<8}")
+        print("  " + "-" * 105)
+        for col_name, stats in prof["columns"].items():
+            type_short = stats['type'].replace("Type()", "").replace("Type", "")
+            null_str = f"{stats['null_count']} ({stats['null_pct']}%)"
+            uniq_str = f"{stats['distinct_count']} ({stats['uniqueness_pct']}%)"
+            min_str = str(stats['min']) if stats['min'] is not None else "-"
+            max_str = str(stats['max']) if stats['max'] is not None else "-"
+            avg_str = str(stats['avg']) if stats['avg'] is not None else "-"
+            print(f"  {col_name:<20} | {type_short:<15} | {null_str:<12} | {uniq_str:<14} | {min_str:<15} | {max_str:<15} | {avg_str:<8}")
+
+    # Export Data Profiling Reports
+    profiling_json_path = os.path.join(reports_dir, "data_profiling_summary.json")
+    with open(profiling_json_path, "w") as f:
+        json.dump(profiling_reports, f, indent=2)
+    print(f"\n[✓] Detailed Data Profiling JSON exported: {profiling_json_path}")
 
     # =========================================================================
     # STAGE 2: SOURCE TO BRONZE INGESTION & 4-WAY RECONCILIATION

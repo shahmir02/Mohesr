@@ -51,11 +51,12 @@ Rules are declared in Python dictionaries (`config/rules_config.py`):
 The Engine (`KeywordDQEngine`) interprets the keyword and executes PySpark column expressions:
 1. **`NOT_NULL`**: Checks for null, empty strings, and `"null"` literals.
 2. **`DEDUPLICATE`**: Windows over natural keys ordered by timestamp to isolate stale duplicates.
-3. **`REFERENTIAL_INTEGRITY`**: Validates foreign keys against parent dimension tables.
-4. **`REGEX_MATCH`**: Tests formatting rules using PySpark regex matching (`rlike`).
-5. **`VALUE_IN_SET`**: Checks if categorical values belong to allowed domain reference sets.
-6. **`DATE_CHRONOLOGY`**: Ensures end dates (e.g. Graduation) do not precede start dates (Enrollment).
-7. **`BUSINESS_RULE`**: Executes complex cross-column SQL boolean expressions.
+3. **`CROSS_KEY_DUPLICATE`**: Identifies duplicate identity combinations (`Full_Name` + `Emirates_ID`) assigned across conflicting `Student_ID` keys (`STU_DQ_07`).
+4. **`REFERENTIAL_INTEGRITY`**: Validates foreign keys against parent dimension tables.
+5. **`REGEX_MATCH`**: Tests formatting rules using PySpark regex matching (`rlike`).
+6. **`VALUE_IN_SET`**: Checks if categorical values belong to allowed domain reference sets.
+7. **`DATE_CHRONOLOGY`**: Ensures end dates (e.g. Graduation) do not precede start dates (Enrollment) and `Updated_Date >= Created_Date`.
+8. **`BUSINESS_RULE`**: Executes complex cross-column SQL boolean expressions.
 
 ---
 
@@ -73,7 +74,7 @@ The Engine (`KeywordDQEngine`) interprets the keyword and executes PySpark colum
 
 ## 5. How the Data Quality Score is Calculated
 
-The Data Quality Health Score is calculated across **35 automated checks**:
+The Data Quality Health Score is calculated across **36 automated checks**:
 
 $$\text{Rule Pass Rate} = \frac{\text{Passed Records}}{\text{Total Records}} \times 100\%$$
 
@@ -82,12 +83,12 @@ $$\text{Dimension Score} = \frac{1}{K} \sum_{i=1}^{K} \text{Rule Pass Rate}_i$$
 $$\text{Overall DQ Score} = \frac{1}{N} \sum_{j=1}^{N} \text{All Rule Pass Rates}_j$$
 
 ### Live Scorecard Summary:
-- **Overall DQ Health Score**: **97.71% (EXCELLENT)**
+- **Overall DQ Health Score**: **97.78% (EXCELLENT)**
 - **Completeness Score**: **99.12%**
 - **Consistency Score**: **99.21%**
 - **Validity Score**: **97.14%**
 - **Referential Integrity Score**: **94.31%**
-- **Uniqueness Score**: **88.24%**
+- **Uniqueness Score**: **94.12%**
 - **Timeliness Score**: **100.00%**
 - **Bronze Layer**: **100.00%** | **Silver Layer**: **96.00%** | **Gold Layer**: **100.00%**
 

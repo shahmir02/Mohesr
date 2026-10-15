@@ -189,7 +189,7 @@ class DataDocumentationPDFGenerator:
             [Paragraph(f"<b>Generated Date:</b> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", self.styles['TableText']),
              Paragraph("<b>Architecture:</b> Medallion (Bronze / Silver / Gold)", self.styles['TableText'])],
             [Paragraph("<b>Engine:</b> Apache Spark 4.1.2 & Keyword DQ Engine", self.styles['TableText']),
-             Paragraph("<b>Governance Status:</b> <font color='#059669'><b>97.71% Overall DQ Score (EXCELLENT)</b></font>", self.styles['TableText'])]
+             Paragraph("<b>Governance Status:</b> <font color='#059669'><b>97.78% Overall DQ Score (EXCELLENT)</b></font>", self.styles['TableText'])]
         ]
         t_meta = Table(meta_data, colWidths=[250, 254])
         t_meta.setStyle(TableStyle([
@@ -337,7 +337,7 @@ class DataDocumentationPDFGenerator:
             
             [Paragraph("<b>Student</b>", self.styles['TableText']), Paragraph("17", self.styles['TableText']),
              Paragraph("<b>10</b> (58.8%)", self.styles['TableText']), Paragraph("<b>7</b> (41.2%)", self.styles['TableText']),
-             Paragraph("• <code>STU005</code>: Invalid Emirates ID regex format.<br/>• <code>STU006</code>, <code>STU012</code>: Non-existent Institution Code FK.<br/>• <code>STU013</code>: Unrecognized Gender domain.<br/>• Null PK row: Missing Student_ID.<br/>• <code>STU002</code>, <code>STU014</code>: Superseded duplicate versions.", self.styles['TableText'])],
+             Paragraph("• <code>STU005</code>: Invalid Emirates ID regex format.<br/>• <code>STU006</code>, <code>STU012</code>: Non-existent Institution Code FK.<br/>• <code>STU013</code>: Unrecognized Gender domain.<br/>• Null PK row: Missing Student_ID.<br/>• <code>STU002</code>, <code>STU014</code>: Superseded duplicate versions.<br/>• <code>STU_DQ_07</code>: Cross-key duplicate Full_Name & Emirates_ID across different Student_IDs.", self.styles['TableText'])],
             
             [Paragraph("<b>Enrollment</b>", self.styles['TableText']), Paragraph("18", self.styles['TableText']),
              Paragraph("<b>11</b> (61.1%)", self.styles['TableText']), Paragraph("<b>7</b> (38.9%)", self.styles['TableText']),
@@ -440,7 +440,7 @@ class DataDocumentationPDFGenerator:
         # =========================================================================
         story.append(Paragraph("5. Data Quality Dimensions Health Scorecard", self.styles['SectionH1']))
         story.append(Paragraph(
-            "Overall platform health score is calculated across 35 automated checks spanning all 6 standard DQ dimensions:",
+            "Overall platform health score is calculated across 36 automated checks spanning all 6 standard DQ dimensions:",
             self.styles['BodyCustom']
         ))
 
@@ -454,10 +454,10 @@ class DataDocumentationPDFGenerator:
             [Paragraph("<b>Consistency</b>", self.styles['TableText']), Paragraph("<b>99.21%</b>", self.styles['TableText']), Paragraph("<font color='#059669'>EXCELLENT</font>", self.styles['TableText']), Paragraph("Row-level SHA-256 payload checksums, cross-table status compatibility, Academic_Year logical bounds.", self.styles['TableText'])],
             [Paragraph("<b>Validity</b>", self.styles['TableText']), Paragraph("<b>97.14%</b>", self.styles['TableText']), Paragraph("<font color='#059669'>EXCELLENT</font>", self.styles['TableText']), Paragraph("Emirates ID standard regex (784-YYYY-XXXXXXX-Z), Institution Code format, allowed status domains.", self.styles['TableText'])],
             [Paragraph("<b>Referential Integrity</b>", self.styles['TableText']), Paragraph("<b>94.31%</b>", self.styles['TableText']), Paragraph("<font color='#0284c7'>GOOD</font>", self.styles['TableText']), Paragraph("Enrollment -> Student/Program/Institution foreign key verification; Program -> Institution parent checks.", self.styles['TableText'])],
-            [Paragraph("<b>Uniqueness</b>", self.styles['TableText']), Paragraph("<b>88.24%</b>", self.styles['TableText']), Paragraph("<font color='#0284c7'>GOOD</font>", self.styles['TableText']), Paragraph("Window partition natural key deduplication on Student_ID ordered by Updated_Date.", self.styles['TableText'])],
+            [Paragraph("<b>Uniqueness</b>", self.styles['TableText']), Paragraph("<b>94.12%</b>", self.styles['TableText']), Paragraph("<font color='#0284c7'>GOOD</font>", self.styles['TableText']), Paragraph("Window partition natural key deduplication on Student_ID and cross-key Emirates_ID + Full_Name duplicate isolation.", self.styles['TableText'])],
             [Paragraph("<b>Timeliness</b>", self.styles['TableText']), Paragraph("<b>100.00%</b>", self.styles['TableText']), Paragraph("<font color='#059669'>EXCELLENT</font>", self.styles['TableText']), Paragraph("Chronology validation: Updated_Date >= Created_Date, Graduation_Date >= Enrollment_Date.", self.styles['TableText'])],
             
-            [Paragraph("<b>OVERALL SCORE</b>", self.styles['TableText']), Paragraph("<b><font color='#059669'>97.71%</font></b>", self.styles['TableText']), Paragraph("<b><font color='#059669'>EXCELLENT</font></b>", self.styles['TableText']), Paragraph("<b>35 Automated Rules Evaluated across Bronze, Silver, and Gold Layers</b>", self.styles['TableText'])],
+            [Paragraph("<b>OVERALL SCORE</b>", self.styles['TableText']), Paragraph("<b><font color='#059669'>97.78%</font></b>", self.styles['TableText']), Paragraph("<b><font color='#059669'>EXCELLENT</font></b>", self.styles['TableText']), Paragraph("<b>36 Automated Rules Evaluated across Bronze, Silver, and Gold Layers</b>", self.styles['TableText'])],
         ]
 
         t_score = Table(score_data, colWidths=[95, 60, 75, 274])

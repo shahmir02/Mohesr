@@ -88,7 +88,7 @@ Before defining rules, automated statistical and structural profiling is conduct
 
 ## Task 2: Data Quality Rules Matrix
 
-The framework implements 18 comprehensive rules across 6 core DQ dimensions:
+The framework implements 19 comprehensive rules across 6 core DQ dimensions:
 
 | Rule ID | Rule Name | DQ Dimension | Layer | Severity | Expected Action | Description & Condition |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -98,9 +98,9 @@ The framework implements 18 comprehensive rules across 6 core DQ dimensions:
 | **BRZ_REC_04** | Numeric Aggregation Match | Validity | Bronze | HIGH | REJECT / FAIL | SUM, MIN, MAX match across numeric attributes. |
 | **INST_DQ_01** | Institution Code Not Null | Completeness | Silver | CRITICAL | QUARANTINE | `Institution_Code IS NOT NULL AND trim(Institution_Code) != ''`. |
 | **INST_DQ_02** | Institution Code Format | Validity | Silver | HIGH | QUARANTINE | `Institution_Code RLIKE '^INST\d{3}$'`. |
-| **INST_DQ_03** | Institution Status Domain | Validity | Silver | HIGH | QUARANTINE | `Institution_Status IN ('Active', 'Inactive', 'Pending')`. |
+| **INST_DQ_03** | Institution Status Domain | Validity | Silver | HIGH | QUARANTINE | `Institution_Status IN ('Active', 'Inactive', 'Pending')` (case-sensitive). |
 | **PRG_DQ_01** | Program Code Not Null | Completeness | Silver | CRITICAL | QUARANTINE | `Program_Code IS NOT NULL AND trim(Program_Code) != ''`. |
-| **PRG_DQ_02** | Program Status Domain | Validity | Silver | HIGH | QUARANTINE | `Program_Status IN ('Active', 'Suspended', 'Discontinued')`. |
+| **PRG_DQ_02** | Program Status Domain | Validity | Silver | HIGH | QUARANTINE | `Program_Status IN ('Active', 'Suspended', 'Discontinued')` (case-sensitive). |
 | **PRG_DQ_03** | Program Inst Referential Int | Referential Integrity | Silver | HIGH | QUARANTINE | `Program.Institution_Code` exists in clean `Institution` master. |
 | **STU_DQ_01** | Student ID Not Null | Completeness | Silver | CRITICAL | QUARANTINE | `Student_ID IS NOT NULL AND trim(Student_ID) != ''`. |
 | **STU_DQ_02** | Emirates ID Format | Validity | Silver | HIGH | QUARANTINE | `Emirates_ID RLIKE '^784-\d{4}-\d{7}-\d{1}$'`. |
@@ -108,13 +108,15 @@ The framework implements 18 comprehensive rules across 6 core DQ dimensions:
 | **STU_DQ_04** | Student Inst Referential Int | Referential Integrity | Silver | HIGH | QUARANTINE | `Student.Institution_Code` exists in clean `Institution` master. |
 | **STU_DQ_05** | Gender Standard Domain | Validity | Silver | MEDIUM | QUARANTINE | `Gender IN ('F', 'M', 'Other', 'Unknown')`. |
 | **STU_DQ_06** | Student Update Timeliness | Timeliness | Silver | HIGH | QUARANTINE | `Updated_Date >= Created_Date`. |
+| **STU_DQ_07** | Student Identity Cross-Key Deduplication | Uniqueness | Silver | HIGH | QUARANTINE | Check for duplicate `Full_Name`/`Name` and `Emirates_ID` associated with different `Student_ID` values (`COUNT(DISTINCT Student_ID) > 1`). |
+| **STU_DQ_08** | Student Record Freshness & Delay Validation | Timeliness | Silver | MEDIUM | QUARANTINE | Verify record timestamps are within allowable SLA delay threshold (`DATEDIFF(CURRENT_TIMESTAMP, Updated_Date) <= max_days`). |
 | **ENR_DQ_01** | Enrollment ID Not Null | Completeness | Silver | CRITICAL | QUARANTINE | `Enrollment_ID IS NOT NULL AND trim(Enrollment_ID) != ''`. |
 | **ENR_DQ_02** | Enrollment Student ID Not Null| Completeness | Silver | CRITICAL | QUARANTINE | Foreign key `Student_ID` is not null. |
 | **ENR_DQ_03** | Enrollment Student Ref Int | Referential Integrity | Silver | HIGH | QUARANTINE | `Enrollment.Student_ID` exists in clean `Student` master. |
 | **ENR_DQ_04** | Enrollment Program Ref Int | Referential Integrity | Silver | HIGH | QUARANTINE | `Enrollment.Program_Code` exists in clean `Program` master. |
 | **ENR_DQ_05** | Enrollment Inst Ref Int | Referential Integrity | Silver | HIGH | QUARANTINE | `Enrollment.Institution_Code` exists in clean `Institution` master. |
 | **ENR_DQ_06** | Date Chronology Check | Consistency | Silver | HIGH | QUARANTINE | `Graduation_Date IS NULL OR Graduation_Date >= Enrollment_Date`. |
-| **ENR_DQ_07** | Enrollment Status Domain | Validity | Silver | MEDIUM | QUARANTINE | `Enrollment_Status IN ('Enrolled', 'Graduated', 'Suspended', 'Withdrawn')`. |
+| **ENR_DQ_07** | Enrollment Status Domain | Validity | Silver | MEDIUM | QUARANTINE | `Enrollment_Status IN ('Enrolled', 'Graduated', 'Suspended', 'Withdrawn')` (case-sensitive). |
 | **ENR_DQ_08** | Academic Year Range | Validity | Silver | HIGH | QUARANTINE | `Academic_Year BETWEEN 2000 AND 2030`. |
 | **GOLD_DQ_01** | Active Institution Rule | Consistency | Gold | HIGH | QUARANTINE | In Gold Mart: `Institution_Status = 'Active'`. |
 | **GOLD_DQ_02** | Active Program Rule | Consistency | Gold | HIGH | QUARANTINE | In Gold Mart: `Program_Status = 'Active'`. |
@@ -228,6 +230,76 @@ def execute_date_chronology(df, start_col, end_col):
     return clean_df, quarantine_df
 ```
 
+### 4. Cross-Key Identity Deduplication Control (Uniqueness & Identity Integrity)
+```python
+# Configuration:
+# {"keyword": "CROSS_KEY_DUPLICATE", "params": {"key_columns": ["Full_Name", "Emirates_ID"], "distinct_column": "Student_ID"}}
+
+def execute_cross_key_duplicate_check(df, key_cols=["Full_Name", "Emirates_ID"], distinct_col="Student_ID"):
+    # Window to count distinct student IDs per identity combination (Full_Name + Emirates_ID)
+    window_spec = Window.partitionBy(*[F.col(k) for k in key_cols])
+    
+    # Calculate count of distinct IDs per natural identity
+    id_counts = df.groupBy(*key_cols).agg(F.countDistinct(distinct_col).alias("_distinct_id_count"))
+    joined_df = df.join(id_counts, on=key_cols, how="left")
+    
+    invalid_cond = F.col("_distinct_id_count") > 1
+    
+    clean_df = joined_df.filter(~invalid_cond).drop("_distinct_id_count")
+    quarantine_df = joined_df.filter(invalid_cond).drop("_distinct_id_count").withColumn(
+        "dq_errors", F.array(F.lit("STU_DQ_07|Uniqueness|Silver|HIGH|QUARANTINE|CROSS_KEY_DUPLICATE: Duplicate Emirates_ID & Full_Name across multiple Student_IDs"))
+    )
+    return clean_df, quarantine_df
+```
+
+Equivalent ANSI SQL:
+```sql
+-- Find conflicting identities sharing same Emirates_ID and Full_Name under different Student_IDs:
+WITH ConflictingIdentities AS (
+    SELECT Full_Name, Emirates_ID
+    FROM bronze_student
+    WHERE Emirates_ID IS NOT NULL AND Full_Name IS NOT NULL
+    GROUP BY Full_Name, Emirates_ID
+    HAVING COUNT(DISTINCT Student_ID) > 1
+)
+-- Quarantine conflicting records:
+SELECT s.*, 'STU_DQ_07: Duplicate Emirates_ID & Full_Name with different Student_ID' AS dq_error
+FROM bronze_student s
+INNER JOIN ConflictingIdentities c 
+    ON s.Full_Name = c.Full_Name AND s.Emirates_ID = c.Emirates_ID;
+```
+
+### 4. Reusable Case-Sensitive Status Domain Control (Validity Dimension)
+```python
+# Configuration:
+# {"keyword": "VALUE_IN_SET", "params": {"column": "Institution_Status", "allowed_values": ["Active", "Inactive", "Pending"], "case_sensitive": True}}
+
+def execute_status_domain_check(df, status_col="Institution_Status", allowed_values=None, case_sensitive=True):
+    if allowed_values is None:
+        allowed_values = ["Active", "Inactive", "Pending"]
+    
+    if case_sensitive:
+        invalid_cond = F.col(status_col).isNotNull() & (~F.col(status_col).isin(allowed_values))
+    else:
+        lower_allowed = [v.lower() for v in allowed_values]
+        invalid_cond = F.col(status_col).isNotNull() & (~F.lower(F.col(status_col)).isin(lower_allowed))
+        
+    quarantine_df = df.filter(invalid_cond).withColumn(
+        "dq_errors", F.array(F.lit(f"STATUS_DQ_ERROR|Validity|Silver|HIGH|QUARANTINE: Invalid case or domain in {status_col}"))
+    )
+    clean_df = df.filter(~invalid_cond)
+    return clean_df, quarantine_df
+```
+
+Equivalent ANSI SQL:
+```sql
+-- Case-sensitive status validation (exact casing):
+SELECT * 
+FROM bronze_institution
+WHERE Institution_Status IS NOT NULL 
+  AND Institution_Status NOT IN ('Active', 'Inactive', 'Pending');
+```
+
 ---
 
 ## Task 5: Exception Handling & Remediation
@@ -292,14 +364,15 @@ Reconciliation between external source systems and the enterprise platform goes 
 
 ## Task 8: Root-Cause Analysis (Diagnostic Investigation)
 
-### Scenario
+### 1. Scenario Overview
 - **Yesterday:** Source contained 1,000,000 enrollment records.
 - **Today:**
   - **Bronze:** 1,000,000 records
-  - **Silver:** 970,000 records (30,000 drop)
+  - **Silver:** 970,000 records (30,000 drop from Bronze)
   - **Gold:** 850,000 records (120,000 drop from Silver)
+  - **Total Pipeline Attrition:** 150,000 records from Source to Gold Wide Mart
 
-### Step-by-Step Investigation Workflow
+### 2. Diagnostic Investigation Workflow Diagram
 
 ```
 +---------------------------------------------------------------------------------------------------------+
@@ -354,6 +427,43 @@ Reconciliation between external source systems and the enterprise platform goes 
 | * Remediation Action: Export 30,000 defective records to institution stewards for profile correction.   |
 +---------------------------------------------------------------------------------------------------------+
 ```
+
+### 3. Comprehensive Diagnostic Investigation Methodology
+
+#### Step 1: Bronze Ingestion Integrity Verification (Source → Bronze)
+- **Objective:** Establish whether the ingestion pipeline experienced transport data loss, network drops, or truncation.
+- **Methodology:** Run cryptographic checksum reconciliation (`SUM(MD5)` across serialized row contents) and compare raw source file line counts against Bronze table record counts.
+- **Outcome:** Exact count match (`1,000,000 = 1,000,000`) and matching schema confirm zero transport data loss.
+
+#### Step 2: Silver Quarantine Breakdown (Bronze → Silver Drop: 30,000 Records)
+- **Objective:** Classify the 30,000 quarantined records into expected pipeline operations vs. true source anomalies.
+- **Methodology:** Unnest `dq_errors` in `silver_quarantine_enrollment` to categorize anomalies by rule identifier and failure reason.
+- **Detailed Findings:**
+  1. **Deduplication / Version Resolution (`STU_DQ_03` - 15,000 records):** *Expected Business Filtering*. Multi-version student updates where only the latest `Updated_Date` is promoted to clean storage.
+  2. **Referential Integrity Defects (`ENR_DQ_03`, `ENR_DQ_04` - 8,000 records):** *Data Quality Defect*. Orphan foreign keys referencing non-existent students or academic programs.
+  3. **Mandatory Identifier Completeness (`ENR_DQ_01`, `ENR_DQ_02` - 4,000 records):** *Data Quality Defect*. Missing/null primary keys (`Enrollment_ID` / `Student_ID`).
+  4. **Date Chronology (`ENR_DQ_06` - 3,000 records):** *Data Quality Defect*. Chronological paradox where `Graduation_Date < Enrollment_Date`.
+
+#### Step 3: Gold Mart Scoping Analysis (Silver → Gold Drop: 120,000 Records)
+- **Objective:** Trace why 120,000 Silver Clean records were omitted from `gold_fact_enrollment`.
+- **Methodology:** Anti-join `silver_clean_enrollment` against `gold_fact_enrollment` evaluating business predicates and dimensional filter conditions.
+- **Detailed Findings:**
+  1. **Inactive Institution / Suspended Program Scoping (`GOLD_DQ_01`, `GOLD_DQ_02` - 70,000 records):** *Expected Business Filtering*. Analytical mart specifically scopes active educational entities.
+  2. **Non-Active Enrollment Status Scoping (35,000 records):** *Expected Business Filtering*. Graduated and withdrawn student records routed to specialized historical marts.
+  3. **Student Minimum Age Rule (`GOLD_DQ_03` - 15,000 records):** *Data Quality Defect*. Invalid dates of birth resulting in calculated student age `< 16 years`.
+
+### 4. Variance Reconciliation & Synthesis
+
+| Category | Record Count | Contributing Factors | Assessment |
+| :--- | :--- | :--- | :--- |
+| **Expected Business Filtering** | **120,000** | 15,000 (Deduplicated stale versions) + 70,000 (Inactive entities) + 35,000 (Historical lifecycles) | Valid platform behavior adhering to mart domain boundaries. |
+| **True Data Quality Defects** | **30,000** | 15,000 (Silver Quarantine: Broken FKs, Null IDs, Date logic) + 15,000 (Gold Quarantine: Invalid DOB) | Actionable errors requiring data steward remediation. |
+| **Total Reconciled Drop** | **150,000** | Source (1,000,000) minus Gold Mart (850,000) | **100% Accounted For** |
+
+### 5. Remediation & Action Plan
+1. **Quarantine Export & Steward Notification:** Segregate and export the 30,000 true defect records to regional data stewards with attached error codes.
+2. **Upstream Source Gatekeeping:** Coordinate with source application teams to add client-side validations for mandatory fields, valid DOBs, and logical date ranges.
+3. **Reprocessing Pipeline:** Once stewards submit corrected records, process them through Silver with `_is_reprocessed = TRUE` to flow into Gold marts.
 
 ---
 

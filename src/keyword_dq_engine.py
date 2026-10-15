@@ -36,14 +36,18 @@ class KeywordDQEngine:
     @staticmethod
     def profile_data(df: DataFrame, dataset_name: str = "Dataset") -> Dict[str, Any]:
         """
-        Profiles a DataFrame: calculates row count, columns, data types, nulls, and distinct counts.
+        Profiles a DataFrame: calculates row count, columns, data types, nulls, distinct counts,
+        min, max, average (for numeric columns), and string length metrics.
         """
         row_count = df.count()
         columns = df.columns
         col_types = {field.name: str(field.dataType) for field in df.schema.fields}
         
         col_profiles = {}
-        for c in columns:
+        for field in df.schema.fields:
+            c = field.name
+            dtype_str = str(field.dataType)
+            
             null_count = df.filter(
                 F.col(c).isNull() | 
                 (F.trim(F.col(c).cast("string")) == "") | 
@@ -51,12 +55,52 @@ class KeywordDQEngine:
             ).count()
             distinct_count = df.select(c).distinct().count()
             
+            # Non-null values for metric aggregations
+            non_null_df = df.filter(F.col(c).isNotNull() & (F.trim(F.col(c).cast("string")) != ""))
+            has_data = non_null_df.count() > 0
+            
+            min_val = None
+            max_val = None
+            avg_val = None
+            min_len = None
+            max_len = None
+            
+            if has_data:
+                # Min and Max for comparable values
+                min_max_row = non_null_df.agg(
+                    F.min(F.col(c)).alias("min_val"),
+                    F.max(F.col(c)).alias("max_val")
+                ).collect()[0]
+                min_val = str(min_max_row["min_val"]) if min_max_row["min_val"] is not None else None
+                max_val = str(min_max_row["max_val"]) if min_max_row["max_val"] is not None else None
+                
+                # Avg for numeric columns
+                numeric_types = ("IntegerType", "LongType", "FloatType", "DoubleType", "DecimalType", "ShortType", "ByteType")
+                if any(nt in dtype_str for nt in numeric_types):
+                    avg_row = non_null_df.agg(F.avg(F.col(c).cast("double")).alias("avg_val")).collect()[0]
+                    if avg_row["avg_val"] is not None:
+                        avg_val = round(float(avg_row["avg_val"]), 2)
+                
+                # String lengths
+                if "StringType" in dtype_str:
+                    len_row = non_null_df.agg(
+                        F.min(F.length(F.col(c))).alias("min_len"),
+                        F.max(F.length(F.col(c))).alias("max_len")
+                    ).collect()[0]
+                    min_len = int(len_row["min_len"]) if len_row["min_len"] is not None else None
+                    max_len = int(len_row["max_len"]) if len_row["max_len"] is not None else None
+            
             col_profiles[c] = {
-                "type": col_types[c],
+                "type": dtype_str,
                 "null_count": null_count,
                 "null_pct": round((null_count / row_count * 100) if row_count > 0 else 0.0, 2),
                 "distinct_count": distinct_count,
-                "uniqueness_pct": round((distinct_count / row_count * 100) if row_count > 0 else 0.0, 2)
+                "uniqueness_pct": round((distinct_count / row_count * 100) if row_count > 0 else 0.0, 2),
+                "min": min_val,
+                "max": max_val,
+                "avg": avg_val,
+                "min_length": min_len,
+                "max_length": max_len
             }
             
         return {
@@ -228,6 +272,24 @@ class KeywordDQEngine:
                 .otherwise(F.col("dq_errors"))
             )
 
+        elif keyword in ("FRESHNESS_CHECK", "MAX_DELAY", "TIMELINESS_LAG"):
+            ts_col = params.get("timestamp_column", "Updated_Date")
+            max_days = params.get("max_delay_days", params.get("max_age_days", 3650))
+            ref_ts = params.get("reference_timestamp", None)
+            
+            ts_val = F.coalesce(F.to_timestamp(F.col(ts_col)), F.to_date(F.col(ts_col)).cast("timestamp"))
+            ref_val = F.to_timestamp(F.lit(ref_ts)) if ref_ts else F.current_timestamp()
+            
+            # Record is considered delayed / stale if (ref_val - ts_val) in days exceeds max_days or if ts_val is in future beyond tolerance
+            delay_days = (F.unix_timestamp(ref_val) - F.unix_timestamp(ts_val)) / 86400.0
+            cond = F.col(ts_col).isNotNull() & (delay_days > max_days)
+            
+            df = df.withColumn(
+                "dq_errors",
+                F.when(cond, F.array_union(F.col("dq_errors"), F.array(F.lit(f"{err_tag}Timeliness violation: Record in '{ts_col}' is delayed beyond threshold ({max_days} days)"))))
+                .otherwise(F.col("dq_errors"))
+            )
+
         elif keyword in ("CROSS_KEY_DUPLICATE", "DUPLICATE_CROSS_KEYS", "CROSS_COLUMN_DUPLICATE"):
             key_cols = params.get("key_columns", ["Full_Name", "Emirates_ID"])
             actual_key_cols = []
@@ -277,10 +339,17 @@ class KeywordDQEngine:
                 .otherwise(F.col("dq_errors"))
             )
 
-        elif keyword == "VALUE_IN_SET":
+        elif keyword in ("VALUE_IN_SET", "STATUS_CHECK", "ALLOWED_DOMAIN"):
             col_name = params["column"]
             allowed_values = params["allowed_values"]
-            cond = F.col(col_name).isNotNull() & (~F.col(col_name).isin(allowed_values))
+            case_sensitive = params.get("case_sensitive", True)
+            
+            if case_sensitive:
+                cond = F.col(col_name).isNotNull() & (~F.col(col_name).isin(allowed_values))
+            else:
+                lower_allowed = [str(v).lower() for v in allowed_values]
+                cond = F.col(col_name).isNotNull() & (~F.lower(F.col(col_name)).isin(lower_allowed))
+                
             df = df.withColumn(
                 "dq_errors",
                 F.when(cond, F.array_union(F.col("dq_errors"), F.array(F.lit(f"{err_tag}Invalid domain value in '{col_name}'. Allowed: {allowed_values}"))))
@@ -410,5 +479,59 @@ class KeywordDQEngine:
                 "distinct_column": distinct_column
             },
             "description": f"Check for duplicate {key_columns} associated with different {distinct_column} values."
+        }
+        return KeywordDQEngine.apply_keyword_rule(df, rule)
+
+    @staticmethod
+    def check_timeliness_delay(df: DataFrame,
+                               timestamp_column: str = "Updated_Date",
+                               max_delay_days: int = 3650,
+                               reference_timestamp: Optional[str] = None,
+                               rule_id: str = "CHK_TIMELINESS_DELAY",
+                               action: str = "QUARANTINE") -> DataFrame:
+        """
+        Validates timeliness and identifies delayed or excessively stale records exceeding max_delay_days.
+        """
+        rule = {
+            "rule_id": rule_id,
+            "rule_name": f"{timestamp_column} Timeliness Delay Validation",
+            "dimension": "Timeliness",
+            "layer": "Silver",
+            "keyword": "FRESHNESS_CHECK",
+            "severity": "MEDIUM",
+            "action": action,
+            "params": {
+                "timestamp_column": timestamp_column,
+                "max_delay_days": max_delay_days,
+                "reference_timestamp": reference_timestamp
+            },
+            "description": f"Validate that {timestamp_column} is not delayed by more than {max_delay_days} days."
+        }
+        return KeywordDQEngine.apply_keyword_rule(df, rule)
+
+    @staticmethod
+    def check_status_domain(df: DataFrame,
+                            status_column: str,
+                            allowed_values: List[str],
+                            case_sensitive: bool = True,
+                            rule_id: str = "CHK_STATUS_DOMAIN",
+                            action: str = "QUARANTINE") -> DataFrame:
+        """
+        Validates that status_column strictly belongs to allowed_values with case-sensitive enforcement.
+        """
+        rule = {
+            "rule_id": rule_id,
+            "rule_name": f"{status_column} Case-Sensitive Status Domain Validation",
+            "dimension": "Validity",
+            "layer": "Silver",
+            "keyword": "VALUE_IN_SET",
+            "severity": "HIGH",
+            "action": action,
+            "params": {
+                "column": status_column,
+                "allowed_values": allowed_values,
+                "case_sensitive": case_sensitive
+            },
+            "description": f"Validate that {status_column} matches allowed status values {allowed_values} with case_sensitive={case_sensitive}."
         }
         return KeywordDQEngine.apply_keyword_rule(df, rule)

@@ -33,7 +33,7 @@ The system is architected around the **Medallion Architecture pattern** with an 
                                | (data/silver/)                        | =====+                      |
                                | - Standardization & Trimming          |                             |
                                | - Keyword DQ Rules Engine             |                             |
-                               |   (18 Rules across 6 Dimensions)      |                             |
+                               |   (19 Rules across 6 Dimensions)      |                             |
                                +---------------------------------------+                             |
                                        /                       \                                     |
                          [Clean Data] /                         \ [Quarantined Data]                 |
@@ -187,7 +187,7 @@ The pipeline outputs structured datasets, analytical models, and governance dash
 
 ### 4.2. Governance, Monitoring & Scorecard Outputs
 1. **Interactive HTML DQ Scorecard (`reports/dq_scorecard_report.html`):**
-   - Executive dashboard presenting overall data health (97.71%), layer pass rates, dimension health, quarantine summaries, and individual rule breakdown.
+   - Executive dashboard presenting overall data health (97.78%), layer pass rates, dimension health, quarantine summaries, and individual rule breakdown.
 2. **Machine-Readable DQ Summaries (`reports/dq_summary.json`, `reports/dq_summary.md`):**
    - Structured JSON and Markdown metrics for CI/CD gates and automated alerting.
 3. **Plain-English Test Cases Summary (`data/dq_test_cases_summary.csv` & `docs/`):**
@@ -215,7 +215,7 @@ These scripts are administrative or documentation utilities, not standard automa
    - **Purpose:** Standalone administrative utility to generate high-resolution executive PDF documentation (`docs/DATA_DOCUMENTATION.pdf`).
    - **Clarification:** The PDF file is **NOT a recurring data pipeline output**. It is an on-demand documentation generator used for executive presentation and technical handovers.
 2. **`src/generate_test_summary_csv.py`:**
-   - **Purpose:** One-time / on-demand utility to export the 18+ Data Quality test cases into CSV matrices (`docs/dq_test_cases_summary.csv`, `reports/`, `data/`).
+   - **Purpose:** One-time / on-demand utility to export the 19 Data Quality test cases into CSV matrices (`docs/dq_test_cases_summary.csv`, `reports/`, `data/`).
    - **Usage:** Run when test matrices are updated or when auditing data quality controls for regulatory compliance.
 3. **`run_all.py` / `run.sh`:**
    - **Purpose:** Master wrapper orchestrating the end-to-end suite: pipeline run + scoring + test summary export + PDF generation + PyTest suite execution.

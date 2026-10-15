@@ -63,9 +63,10 @@ def main():
     print("  1. Interactive HTML Scorecard : reports/dq_scorecard_report.html")
     print("  2. JSON Summary Output        : reports/dq_summary.json")
     print("  3. Markdown Summary Report    : reports/dq_summary.md")
-    print("  4. Data Documentation PDF     : docs/DATA_DOCUMENTATION.pdf")
-    print("  5. Allure Test Report Data    : reports/allure-results/")
-    print("  6. Medallion Physical Data    : data/bronze/ (CSV), data/silver/, data/gold/")
+    print("  4. Data Profiling JSON Report : reports/data_profiling_summary.json")
+    print("  5. Data Documentation PDF     : docs/DATA_DOCUMENTATION.pdf")
+    print("  6. Allure Test Report Data    : reports/allure-results/")
+    print("  7. Medallion Physical Data    : data/bronze/ (CSV), data/silver/, data/gold/")
     print("=" * 80 + "\n")
 
 
