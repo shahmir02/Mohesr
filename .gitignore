@@ -1,0 +1,42 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+thumbs.db
+
+# Pytest / test artifacts
+/reports/allure-results/
+
+# Data and pipeline artifacts
+data/**/.crc
+data/**/_SUCCESS
+data/**/.part-*
+
+# Generated docs / PDFs
+docs/*.pdf
+reports/*.pdf
+
+# Logs
+logs/
+*.log
+
+# Virtual envs
+venv/
+.env/
+env/
+
+# IDE
+.idea/
+.vscode/
+
+# Misc
+*.egg-info/
+.dist-info/
+
+# Keep Git from tracking placeholders
+*.placeholder
