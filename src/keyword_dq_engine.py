@@ -215,7 +215,8 @@ class KeywordDQEngine:
         params = rule.get("params", {})
         
         if "dq_errors" not in df.columns:
-            df = df.withColumn("dq_errors", F.array().cast("array<string>"))
+            # Initialize an empty array<string> column safely using SQL expr
+            df = df.withColumn("dq_errors", F.expr("array()").cast("array<string>"))
             
         err_tag = f"{rule_id}|{dimension}|{layer}|{severity}|{action}|{keyword}: "
 
